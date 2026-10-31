@@ -16,6 +16,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onTypeChange }) 
     const [sortedTypes, setSortedTypes] = useState<string[]>([]);
     const [typeFilter, setTypeFilter] = useState('');
     const [isOpen, setIsOpen] = useState(false);
+    const [isTypeSearchActive, setIsTypeSearchActive] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [searchSubmitted, setSearchSubmitted] = useState(false);
 
@@ -42,6 +43,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onTypeChange }) 
         const handleClickOutside = (event: MouseEvent) => {
             if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
+                setIsTypeSearchActive(false);
+                setTypeFilter('');
                 setShowSuggestions(false);
             }
         };
@@ -65,10 +68,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onTypeChange }) 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, softwareTypes]);
 
-    const handleToggle = () => {
-        setIsOpen(!isOpen);
+    const handleArrowClick = () => {
+        setIsOpen(prev => !prev);
+        setIsTypeSearchActive(false);
         setShowSuggestions(false);
-        if (isOpen) setTypeFilter('');
+        setTypeFilter('');
+    };
+
+    const handleTypeFieldFocus = () => {
+        setIsOpen(true);
+        setIsTypeSearchActive(true);
+        setShowSuggestions(false);
     };
 
     const handleCheckboxChange = (type: string) => {
@@ -146,7 +156,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onTypeChange }) 
             <div className="search-bar__dropdown-wrapper">
                 <div
                     className={`search-bar__dropdown-trigger ${isOpen ? 'open' : ''}`}
-                    onClick={() => !isOpen && handleToggle()}
                 >
                     <svg className="search-bar__dropdown-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2">
                         <circle cx="11" cy="11" r="8" />
@@ -156,12 +165,24 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onTypeChange }) 
                     <input
                         type="text"
                         className="search-bar__dropdown-search-input"
-                        placeholder="Тип ПО"
+                        placeholder={isTypeSearchActive ? '' : 'Тип ПО'}
                         value={isOpen ? typeFilter : (selectedTypes.length > 0 ? `Тип ПО: ${selectedTypes.length}` : '')}
                         onChange={(e) => setTypeFilter(e.target.value)}
-                        onFocus={() => !isOpen && handleToggle()}
-                        readOnly={!isOpen}
+                        onFocus={handleTypeFieldFocus}
+                        onClick={handleTypeFieldFocus}
+                        readOnly={!isTypeSearchActive}
                     />
+                    <button
+                        type="button"
+                        className="search-bar__dropdown-arrow"
+                        aria-label={isOpen ? 'Закрыть список типов ПО' : 'Открыть список типов ПО'}
+                        aria-expanded={isOpen}
+                        onClick={handleArrowClick}
+                    >
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d={isOpen ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'} />
+                        </svg>
+                    </button>
                 </div>
 
                 {isOpen && (

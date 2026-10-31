@@ -94,7 +94,7 @@ export const ResultsPage = () => {
 
                     <div className="results-page__search-wrapper">
                         <ResultsSearchBar
-                            initialQuery={query}
+                            initialSelectedTypes={initialClasses}
                             onSearch={handleSearch}
                             onTypeChange={() => {}}
                         />

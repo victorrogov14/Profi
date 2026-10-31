@@ -93,6 +93,20 @@
     flex-shrink: 0;
 }
 
+.results-search-bar__dropdown-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #111111;
+    cursor: pointer;
+}
+
 .results-search-bar__dropdown-search-input {
     flex: 1;
     min-width: 0;
@@ -307,6 +321,12 @@
         height: 14px;
     }
 
+    .results-search-bar__dropdown-arrow,
+    .results-search-bar__dropdown-arrow svg {
+        width: 18px;
+        height: 18px;
+    }
+
     .results-search-bar__dropdown-search-input {
         font-size: 15px;
     }
@@ -410,6 +430,12 @@
     .results-search-bar__dropdown-search-icon {
         width: 12px;
         height: 12px;
+    }
+
+    .results-search-bar__dropdown-arrow,
+    .results-search-bar__dropdown-arrow svg {
+        width: 14px;
+        height: 14px;
     }
 
     .results-search-bar__dropdown-search-input {

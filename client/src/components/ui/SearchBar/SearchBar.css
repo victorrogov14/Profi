@@ -125,6 +125,20 @@
     flex-shrink: 0;
 }
 
+.search-bar__dropdown-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #111111;
+    cursor: pointer;
+}
+
 /* --- ВЫПАДАЮЩЕЕ МЕНЮ --- */
 .search-bar__dropdown-panel {
     position: absolute;
@@ -371,6 +385,12 @@
         height: 14px;
     }
 
+    .search-bar__dropdown-arrow,
+    .search-bar__dropdown-arrow svg {
+        width: 18px;
+        height: 18px;
+    }
+
     .search-bar__dropdown-search-input {
         font-size: 15px;
     }
@@ -503,6 +523,12 @@
     .search-bar__dropdown-search-icon {
         width: 12px;
         height: 12px;
+    }
+
+    .search-bar__dropdown-arrow,
+    .search-bar__dropdown-arrow svg {
+        width: 14px;
+        height: 14px;
     }
 
     .search-bar__dropdown-search-input {
