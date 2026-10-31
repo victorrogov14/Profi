@@ -17,6 +17,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onTypeChange }) 
     const [typeFilter, setTypeFilter] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [searchSubmitted, setSearchSubmitted] = useState(false);
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -82,10 +83,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onTypeChange }) 
 
     const handleSearch = () => {
         setShowSuggestions(false);
+        setSearchSubmitted(true);
         onSearch?.(query, selectedTypes);
     };
 
     const handleInputChange = (value: string) => {
+        setSearchSubmitted(false);
         handleQueryChange(value);
         setShowSuggestions(true);
     };
@@ -116,7 +119,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onTypeChange }) 
                         <input
                             type="text"
                             className="search-bar__input"
-                            placeholder="Например: FortiGate IPS"
+                            placeholder={searchSubmitted ? '' : 'Например: FortiGate IPS'}
                             value={query}
                             onChange={(e) => handleInputChange(e.target.value)}
                             onFocus={handleInputFocus}
@@ -162,6 +165,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onTypeChange }) 
                 </div>
 
                 {isOpen && (
+                    <div className="search-bar__dropdown-panel">
                     <div className="search-bar__dropdown-menu open">
                         <div className="search-bar__dropdown-list">
                             {filteredTypes.map((type) => (
@@ -177,6 +181,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onTypeChange }) 
                             ))}
                         </div>
 
+                    </div>
                         {selectedTypes.length > 0 && (
                             <button
                                 type="button"

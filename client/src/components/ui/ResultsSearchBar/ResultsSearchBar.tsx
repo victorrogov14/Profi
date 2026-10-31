@@ -22,6 +22,7 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
     const [typeFilter, setTypeFilter] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [searchSubmitted, setSearchSubmitted] = useState(false);
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -92,12 +93,14 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
 
     const handleSearch = () => {
         setShowSuggestions(false);
+        setSearchSubmitted(true);
         if (query.trim() || selectedTypes.length > 0) {
             onSearch?.(query, selectedTypes);
         }
     };
 
     const handleInputChange = (value: string) => {
+        setSearchSubmitted(false);
         handleQueryChange(value);
         setShowSuggestions(true);
     };
@@ -126,7 +129,7 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
                     onChange={(e) => handleInputChange(e.target.value)}
                     onFocus={handleInputFocus}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    placeholder="Введите название ПО..."
+                    placeholder={searchSubmitted ? '' : 'Введите название ПО...'}
                 />
 
                 {showSuggestions && suggestions.length > 0 && (
@@ -166,6 +169,7 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
                 </div>
 
                 {isOpen && (
+                    <div className="results-search-bar__dropdown-panel">
                     <div className="results-search-bar__dropdown-menu open">
                         <div className="results-search-bar__dropdown-list">
                             {filteredTypes.map((type) => (
@@ -181,6 +185,7 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
                             ))}
                         </div>
 
+                    </div>
                         {selectedTypes.length > 0 && (
                             <button
                                 type="button"
