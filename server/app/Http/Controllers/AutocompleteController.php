@@ -82,6 +82,7 @@ class AutocompleteController extends Controller
     {
         return ImportReplacement::query()
             ->select('foreign_product_name')
+            ->replaceableByPartners()
             ->when($softwareClasses !== [], function ($query) use ($softwareClasses): void {
                 $query->where(function ($query) use ($softwareClasses): void {
                     foreach ($softwareClasses as $softwareClass) {
