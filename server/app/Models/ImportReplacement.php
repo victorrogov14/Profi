@@ -28,4 +28,12 @@ class ImportReplacement extends Model
         return $this->hasMany(PartnerReplacement::class, 'registry_number', 'registry_number');
 
     }
+
+    public function scopeReplaceableByPartners($query){
+
+        return $query->whereHas('partnerReplacements', function ($q): void {
+            $q->whereNotNull('partner_organisation_id');
+        });
+        
+    }
 }

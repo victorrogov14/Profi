@@ -10,9 +10,11 @@ class SoftwareClassDisplayController extends Controller
 {
     public function softwareClasses(): JsonResponse
     {
-        $softwareClasses = Cache::remember('software_classes', now()->addMinutes(30), function () {
+        $softwareClasses = Cache::remember('software_classes:replaceable', now()->addMinutes(30), function () {
             return ImportReplacement::query()
                 ->whereNotNull('software_class')
+                ->replaceableByPartners()
+                ->distinct()
                 ->pluck('software_class')
                 ->flatMap(function (?string $softwareClass): array {
                     return collect(explode('|', $softwareClass ?? ''))

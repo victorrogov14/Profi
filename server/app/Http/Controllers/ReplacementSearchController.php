@@ -111,36 +111,31 @@ class ReplacementSearchController extends Controller
                 return $rows;
             }
 
-            $partnerProductNames = $rows
-                ->pluck('partner_product_name')
+            $registryNumbers = $rows
+                ->pluck('registry_number')
                 ->filter()
                 ->unique()
                 ->values()
                 ->all();
 
-            $replacesByDomesticAndClass = ImportReplacement::query()
-                ->select(['foreign_product_name', 'domestic_product_name', 'software_class'])
-                ->whereIn('domestic_product_name', $partnerProductNames)
+            $replacesByRegistryNumber = ImportReplacement::query()
+                ->select(['foreign_product_name', 'registry_number'])
+                ->whereIn('registry_number', $registryNumbers)
                 ->when($softwareClasses !== [], fn ($query) => $this->applySoftwareClassFilters($query, $softwareClasses))
                 ->get()
-                ->groupBy(fn (ImportReplacement $replacement): string => $this->replacementGroupKey(
-                    $replacement->domestic_product_name,
-                    $replacement->software_class
-                ))
+                ->groupBy('registry_number')
                 ->map(fn ($items) => $items
                     ->pluck('foreign_product_name')
                     ->filter()
                     ->unique()
+                    ->sort()
                     ->values()
                     ->all()
                 );
 
             return $rows
-                ->map(function (array $row) use ($replacesByDomesticAndClass): array {
-                    $row['replaces'] = $replacesByDomesticAndClass->get(
-                        $this->replacementGroupKey($row['partner_product_name'], $row['software_class']),
-                        []
-                    );
+                ->map(function (array $row) use ($replacesByRegistryNumber): array {
+                    $row['replaces'] = $replacesByRegistryNumber->get($row['registry_number'], []);
 
                     return $row;
                 })
@@ -167,11 +162,6 @@ class ReplacementSearchController extends Controller
                 ['%|'.$this->escapeLike($softwareClass).'|%']
             );
         };
-    }
-
-    private function replacementGroupKey(string $domesticProductName, ?string $softwareClass): string
-    {
-        return $domesticProductName.'|'.($softwareClass ?? '');
     }
 
     private function normalizeQuery(string $query): string
