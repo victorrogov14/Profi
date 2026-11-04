@@ -5,12 +5,14 @@ import { useAutocomplete } from '../../../hooks/useAutocomplete';
 
 interface ResultsSearchBarProps {
     initialSelectedTypes?: string[];
+    initialSearchSubmitted?: boolean;
     onSearch?: (query: string, selectedTypes: string[]) => void;
     onTypeChange?: (types: string[]) => void;
 }
 
 export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
                                                                       initialSelectedTypes = [],
+                                                                      initialSearchSubmitted = false,
                                                                       onSearch,
                                                                       onTypeChange
                                                                   }) => {
@@ -23,7 +25,7 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
     const [isOpen, setIsOpen] = useState(false);
     const [isTypeSearchActive, setIsTypeSearchActive] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [searchSubmitted, setSearchSubmitted] = useState(false);
+    const [searchSubmitted, setSearchSubmitted] = useState(initialSearchSubmitted);
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 

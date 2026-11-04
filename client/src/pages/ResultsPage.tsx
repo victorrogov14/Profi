@@ -95,6 +95,7 @@ export const ResultsPage = () => {
                     <div className="results-page__search-wrapper">
                         <ResultsSearchBar
                             initialSelectedTypes={initialClasses}
+                            initialSearchSubmitted={Boolean(initialQuery.trim() || initialClasses.length)}
                             onSearch={handleSearch}
                             onTypeChange={() => {}}
                         />

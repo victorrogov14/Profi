@@ -51,10 +51,9 @@
 
     .blue-banner__container {
         max-width: 990px;
-        padding: 0 135px;
+        padding: 0 24px;
     }
 
-    /
     .blue-banner__title {
         font-size: 24px;
         margin-bottom: 16px;
