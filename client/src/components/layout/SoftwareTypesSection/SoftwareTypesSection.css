@@ -50,7 +50,8 @@
     color: #000000;
     cursor: pointer;
     transition: all 0.3s ease;
-    white-space: nowrap;
+    white-space: normal;
+    max-width: 100%;
 }
 
 .software-types-section__btn:hover {
@@ -91,8 +92,8 @@
 
     .software-types-section__btn {
         width: auto;
-        height: 40px;
-        white-space: nowrap;
+        min-height: 40px;
+        white-space: normal;
         background-color: #ffffff;
         padding: 0 20px;
         font-size: 14px;
@@ -108,7 +109,7 @@
     }
 
     .software-types-section__container {
-        padding: 0 44px;
+        padding: 0 20px;
     }
 
     .software-types-section__title {
@@ -132,8 +133,8 @@
 
     .software-types-section__btn {
         width: auto;
-        height: 32px;
-        white-space: nowrap;
+        min-height: 32px;
+        white-space: normal;
         background-color: #F4F4F4;
         padding: 0 14px;
         font-size: 12px;

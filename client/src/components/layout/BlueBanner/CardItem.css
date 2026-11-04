@@ -13,7 +13,7 @@
     position: relative;
     overflow: hidden;
     border-left: 16px solid #216FA3;
-    height: 381px;
+    min-height: 381px;
 }
 
 .card-item__content {
