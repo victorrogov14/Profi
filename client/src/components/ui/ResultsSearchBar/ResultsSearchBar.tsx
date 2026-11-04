@@ -4,31 +4,28 @@ import { fetchSoftwareClasses } from '../../../services/softwareClassesService';
 import { useAutocomplete } from '../../../hooks/useAutocomplete';
 
 interface ResultsSearchBarProps {
-    initialQuery?: string;
+    initialSelectedTypes?: string[];
     onSearch?: (query: string, selectedTypes: string[]) => void;
     onTypeChange?: (types: string[]) => void;
 }
 
 export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
-                                                                      initialQuery = '',
+                                                                      initialSelectedTypes = [],
                                                                       onSearch,
                                                                       onTypeChange
                                                                   }) => {
-    const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+    const [selectedTypes, setSelectedTypes] = useState<string[]>(initialSelectedTypes);
     const { query, suggestions, handleQueryChange } = useAutocomplete(300, selectedTypes);
 
     const [softwareTypes, setSoftwareTypes] = useState<string[]>([]);
     const [sortedTypes, setSortedTypes] = useState<string[]>([]);
     const [typeFilter, setTypeFilter] = useState('');
     const [isOpen, setIsOpen] = useState(false);
+    const [isTypeSearchActive, setIsTypeSearchActive] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [searchSubmitted, setSearchSubmitted] = useState(false);
 
     const wrapperRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        handleQueryChange(initialQuery);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [initialQuery]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -51,6 +48,8 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
         const handleClickOutside = (event: MouseEvent) => {
             if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
+                setIsTypeSearchActive(false);
+                setTypeFilter('');
                 setShowSuggestions(false);
             }
         };
@@ -74,10 +73,17 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, softwareTypes]);
 
-    const handleToggle = () => {
-        setIsOpen(!isOpen);
+    const handleArrowClick = () => {
+        setIsOpen(prev => !prev);
+        setIsTypeSearchActive(false);
         setShowSuggestions(false);
-        if (isOpen) setTypeFilter('');
+        setTypeFilter('');
+    };
+
+    const handleTypeFieldFocus = () => {
+        setIsOpen(true);
+        setIsTypeSearchActive(true);
+        setShowSuggestions(false);
     };
 
     const handleCheckboxChange = (type: string) => {
@@ -92,12 +98,15 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
 
     const handleSearch = () => {
         setShowSuggestions(false);
+        setSearchSubmitted(true);
         if (query.trim() || selectedTypes.length > 0) {
             onSearch?.(query, selectedTypes);
+            handleQueryChange('');
         }
     };
 
     const handleInputChange = (value: string) => {
+        setSearchSubmitted(false);
         handleQueryChange(value);
         setShowSuggestions(true);
     };
@@ -110,6 +119,7 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
         handleQueryChange(value);
         setShowSuggestions(false);
         onSearch?.(value, selectedTypes);
+        handleQueryChange('');
     };
 
     const filteredTypes = sortedTypes.filter(type =>
@@ -126,7 +136,7 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
                     onChange={(e) => handleInputChange(e.target.value)}
                     onFocus={handleInputFocus}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    placeholder="Введите название ПО..."
+                    placeholder={searchSubmitted ? '' : 'Введите название ПО...'}
                 />
 
                 {showSuggestions && suggestions.length > 0 && (
@@ -147,7 +157,6 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
             <div className="results-search-bar__dropdown-wrapper">
                 <div
                     className={`results-search-bar__dropdown-trigger ${isOpen ? 'open' : ''}`}
-                    onClick={() => !isOpen && handleToggle()}
                 >
                     <svg className="results-search-bar__dropdown-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2">
                         <circle cx="11" cy="11" r="8" />
@@ -157,15 +166,28 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
                     <input
                         type="text"
                         className="results-search-bar__dropdown-search-input"
-                        placeholder="Тип ПО"
+                        placeholder={isTypeSearchActive ? '' : 'Тип ПО'}
                         value={isOpen ? typeFilter : (selectedTypes.length > 0 ? `Тип ПО: ${selectedTypes.length}` : '')}
                         onChange={(e) => setTypeFilter(e.target.value)}
-                        onFocus={() => !isOpen && handleToggle()}
-                        readOnly={!isOpen}
+                        onFocus={handleTypeFieldFocus}
+                        onClick={handleTypeFieldFocus}
+                        readOnly={!isTypeSearchActive}
                     />
+                    <button
+                        type="button"
+                        className="results-search-bar__dropdown-arrow"
+                        aria-label={isOpen ? 'Закрыть список типов ПО' : 'Открыть список типов ПО'}
+                        aria-expanded={isOpen}
+                        onClick={handleArrowClick}
+                    >
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d={isOpen ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'} />
+                        </svg>
+                    </button>
                 </div>
 
                 {isOpen && (
+                    <div className="results-search-bar__dropdown-panel">
                     <div className="results-search-bar__dropdown-menu open">
                         <div className="results-search-bar__dropdown-list">
                             {filteredTypes.map((type) => (
@@ -181,6 +203,7 @@ export const ResultsSearchBar: React.FC<ResultsSearchBarProps> = ({
                             ))}
                         </div>
 
+                    </div>
                         {selectedTypes.length > 0 && (
                             <button
                                 type="button"

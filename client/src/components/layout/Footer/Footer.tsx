@@ -2,6 +2,10 @@ import React from 'react';
 import { FooterMap } from './FooterMap';
 import './Footer.css';
 
+const handleRedirect = () => {
+  window.open("https://profi-uc.ru/")
+};
+
 export const Footer: React.FC = () => {
     const coordinates: [number, number] = [57.001402, 41.007886]; //координаты г. Иваново ул. Уткина, 13
 
@@ -12,7 +16,7 @@ export const Footer: React.FC = () => {
                 <div className="footer__container">
                     <h2 className="footer__title">Контактная информация</h2>
                     <div className="footer__info-row">
-                        <span className="footer__info-item underlined">profi-uc.ru</span>
+                        <span className="footer__info-item underlined" onClick={handleRedirect}>profi-uc.ru</span>
 
 
                         <span className="footer__info-item">
